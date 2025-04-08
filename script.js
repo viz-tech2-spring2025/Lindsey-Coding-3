@@ -1,91 +1,84 @@
 
-		// using d3 for convenience
-		var container = d3.select("#scroll");
-		var figure = container.select("figure");
-		var article = container.select("article");
-		var step = article.selectAll(".step");
+		// Scrollama setup
+var container = d3.select("#scroll");
+var figure = container.select(".image-wrapper"); // Updated to match new image container
+var article = container.select("article");
+var step = article.selectAll(".step");
 
-		// initialize the scrollama
-		var scroller = scrollama();
+var scroller = scrollama();
 
-		// generic window resize listener event
-		function handleResize() {
-			// 1. update height of step elements
-			var stepHeight = Math.floor(window.innerHeight * 0.75);
-			step.style("height", stepHeight + "px");
+// 1. Swap Images with Crossfade
+const imageA = document.getElementById("image-a");
+const imageB = document.getElementById("image-b");
 
-			// 2. update width/height of graphic element
-			var bodyWidth = d3.select("body").node().offsetWidth;
+function swapImages(newSrc) {
+	const current = imageA.classList.contains("show") ? imageA : imageB;
+	const next = current === imageA ? imageB : imageA;
 
-			var figureHeight = Math.floor(window.innerHeight * 0.5);
-			figure.style("height", figureHeight + "px");
-			// 3. tell scrollama to update new element dimensions
-			scroller.resize();
-		}
+	if (current.src.includes(newSrc)) {
+		// Already showing the correct image
+		return;
+	}
 
-		// scrollama event handlers
-		// function handleStepEnter(response) {
-		// 	console.log(response);
-		// 	// response = { element, direction, index }
+	next.src = newSrc;
+	next.classList.add("show");
+	current.classList.remove("show");
+}
 
-		// 	// add color to current step only
-		// 	step.classed("is-active", function (d, i) {
-		// 		return i === response.index;
-		// 	});
+// 2. Handle scroll-based events
+function handleStepEnter(response) {
+	console.log(response);
 
-		// 	// update graphic based on step
-		// 	figure.select("p").text(response.index + 1);
-		// }
+	// Highlight active step
+	step.classed("is-active", function (d, i) {
+		return i === response.index;
+	});
 
+	// OPTIONAL: update a step index display if you have a <p> inside figure
+	// figure.select("p").text(response.index + 1);
 
-        //new handleStepEnter function
-        function handleStepEnter(response) {
-            console.log(response);
-            // response = { element, direction, index }
-        
-            // add color to current step only
-            step.classed("is-active", function (d, i) {
-                return i === response.index;
-            });
-        
-            // update graphic based on step (this still controls the number shown in <p>, if you're using that)
-            figure.select("p").text(response.index + 1);
-        
-            // NEW: change the image inside the figure
-            const mainImage = document.getElementById("main-image");
-        
-            if (response.index === 0) {
-                mainImage.src = "hurricane-scale.svg";
-            } else if (response.index === 1) {
-                mainImage.src = "cat5.svg";
-            } else if (response.index === 2) {
-                mainImage.src = "storm-surge.svg";
-            } else if (response.index === 3) {
-                mainImage.src = "hurricane-scale.svg";
-            }
-            
-        }
-        
+	// Switch images based on the scroll step
+	if (response.index === 0) {
+		swapImages("hurricane-scale.svg");
+	} else if (response.index === 1) {
+		swapImages("cat5.svg");
+	} else if (response.index === 2) {
+		swapImages("storm-surge.svg");
+	} else if (response.index === 3) {
+		swapImages("hurricane-scale.svg");
+	}
+}
 
+// 3. Resize handler
+function handleResize() {
+	var stepHeight = Math.floor(window.innerHeight * 0.75);
+	step.style("height", stepHeight + "px");
 
-		function init() {
-			// 1. force a resize on load to ensure proper dimensions are sent to scrollama
-			handleResize();
+	var figureHeight = Math.floor(window.innerHeight * 0.5);
+	figure.style("height", figureHeight + "px");
 
-			// 2. setup the scroller passing options
-			// this will also initialize trigger observations
-			// 3. bind scrollama event handlers (this can be chained like below)
-			scroller
-				.setup({
-					step: "article .step",
-					debug: false, // turn on lines to see scrolling
-					offset: 0.75
-				})
-				.onStepEnter(handleStepEnter);
+	scroller.resize();
+}
 
-			// setup resize event
-			window.addEventListener("resize", handleResize);
-		}
+// 4. Initialize Scrollama
+function init() {
+	handleResize();
 
-		// kick things off
-		init();
+	scroller
+		.setup({
+			step: "article .step",
+			offset: 0.6, // triggers earlier for better UX
+			debug: false
+		})
+		.onStepEnter(handleStepEnter);
+
+	window.addEventListener("resize", handleResize);
+}
+
+// 5. Show first image immediately on load
+window.addEventListener("DOMContentLoaded", () => {
+	swapImages("hurricane-scale.svg");
+});
+
+// Start it all
+init();
