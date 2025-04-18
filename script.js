@@ -27,26 +27,52 @@ function swapImages(newSrc) {
 
 // 2. Handle scroll-based events
 function handleStepEnter(response) {
-	console.log(response);
+  console.log(response);
 
-	// Highlight active step
-	step.classed("is-active", function (d, i) {
-		return i === response.index;
-	});
+  // Highlight active step
+  step.classed("is-active", function (d, i) {
+    return i === response.index;
+  });
 
-	// OPTIONAL: update a step index display if you have a <p> inside figure
-	// figure.select("p").text(response.index + 1);
+  // OPTIONAL: update a step index display if you have a <p> inside figure
+  // figure.select("p").text(response.index + 1);
 
-	// Switch images based on the scroll step
-	if (response.index === 0) {
-		swapImages("hurricane-scale.svg");
-	} else if (response.index === 1) {
-		swapImages("cat5.svg");
-	} else if (response.index === 2) {
-		swapImages("storm-surge.svg");
-	} else if (response.index === 3) {
-		swapImages("hurricane-scale.svg");
-	}
+  // // Switch images based on the scroll step
+  // if (response.index === 0) {
+  // 	swapImages("images/02-hurricane-scale.svg");
+  // } else if (response.index === 1) {
+  // 	swapImages("images/03-reacecar.svg");
+  // } else if (response.index === 2) {
+  // 	swapImages("storm-surge.svg");
+  // } else if (response.index === 3) {
+  // 	swapImages("hurricane-scale.svg");
+  // }
+
+
+  if (response.index === 5) {
+	figure.style("opacity", 0);
+  } else {
+	figure.style("opacity", 1);
+  }
+  
+
+  // Switch images based on the scroll step
+  //console.log("Current step index:", response.index);
+  if (response.index === 0) {
+    swapImages("images/01-globe.svg");
+  } else if (response.index === 1) {
+	swapImages("images/02-hurricane-scale.svg");
+  } else if (response.index === 2) {
+    swapImages("images/03-reacecar.svg");
+  } else if (response.index === 3) {
+    swapImages("images/04-jet.svg");
+  } else if (response.index === 4) {
+    swapImages("images/05-surge.svg");
+	} else if (response.index === 6) {
+    swapImages("images/06-1970-deaths.svg");
+
+
+  }
 }
 
 // 3. Resize handler
@@ -77,7 +103,8 @@ function init() {
 
 // 5. Show first image immediately on load
 window.addEventListener("DOMContentLoaded", () => {
-	swapImages("hurricane-scale.svg");
+	swapImages("images/01-globe.svg");
+
 });
 
 // Start it all
